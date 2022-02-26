@@ -1,5 +1,6 @@
 import './App.css';
 import React, { useState, useEffect } from 'react';
+import * as util from "util";
 const w2v = require('word2vec');
 
 
@@ -23,9 +24,11 @@ const getAnswerIndex = () => Math.floor(Math.random() * 4);
   //   (Date.now() - new Date(2022, 0, 23, 0, 0, 0).getTime()) / 86400e3
   // ) % NUM_ANSWERS;
 
-function findMatches(theme, callback) {
+const loadModelPromise = util.promisify(w2v.loadModel);
+
+function findMatches(theme) {
   let toReturn = [];
-  w2v.loadModel('./config/wordvecs.txt', (err, model) => {
+  loadModelPromise('./config/wordvecs.txt').then((model) => {
     const similarWords = model.mostSimilar(theme, 15);
     for (let wordPair of similarWords) {
       const word = wordPair['word'].toLowerCase();
@@ -48,7 +51,7 @@ function findMatches(theme, callback) {
       toReturn.push(word);
     }
     toReturn.reverse(); //Our clues should be in reverse order!
-    callback(theme, toReturn);
+    return toReturn;
   });
 }
 
