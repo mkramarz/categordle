@@ -24,10 +24,14 @@ const getAnswerIndex = () => Math.floor(Math.random() * 4);
   // ) % NUM_ANSWERS;
 
 
+//TODO: MAITE give me word associations
+function findMatches(word) {
+  return ["word1", "word2", "word3", "word4", "word5", "word6"];
+}
 
 export default function Game() {
   const { answer, answerIndex, isGuessValid } = useWords();
-  
+
   return (
     <div className="App">
       <header className="App-header">
