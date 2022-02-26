@@ -1,6 +1,6 @@
 import './App.css';
 import React, { useState, useEffect } from 'react';
-
+const w2v = require('word2vec');
 
 
 function useWords() {
@@ -23,10 +23,33 @@ const getAnswerIndex = () => Math.floor(Math.random() * 4);
   //   (Date.now() - new Date(2022, 0, 23, 0, 0, 0).getTime()) / 86400e3
   // ) % NUM_ANSWERS;
 
-
-//TODO: MAITE give me word associations
-function findMatches(word) {
-  return ["word1", "word2", "word3", "word4", "word5", "word6"];
+function findMatches(theme, callback) {
+  let toReturn = [];
+  w2v.loadModel('./config/wordvecs.txt', (err, model) => {
+    const similarWords = model.mostSimilar(theme, 15);
+    for (let wordPair of similarWords) {
+      const word = wordPair['word'].toLowerCase();
+      if (toReturn.length === 6) { //Once we have enough words, we can stop early
+        break;
+      }
+      if (word.includes(theme)) { //We'll toss out any words that are too similar
+        continue;
+      }
+      let matchesExisting = false;
+      for (let existingWord of toReturn) { //But clues also shouldn't be too similar to each other
+        if (existingWord.includes(word) || word.includes(existingWord)) {
+          matchesExisting = true;
+          break;
+        }
+      }
+      if (matchesExisting) {
+        continue;
+      }
+      toReturn.push(word);
+    }
+    toReturn.reverse(); //Our clues should be in reverse order!
+    callback(theme, toReturn);
+  });
 }
 
 export default function Game() {
