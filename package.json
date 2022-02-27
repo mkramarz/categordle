@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/mkramarz/categordle/issues"
   },
-  "homepage": "https://github.com/mkramarz/categordle#readme"
+  "homepage": "https://github.com/mkramarz/categordle#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "util": "^0.12.4",
+    "word2vec": "^1.1.5"
+  }
 }
