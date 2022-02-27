@@ -2,15 +2,15 @@ import './App.css';
 import React, { useState, useEffect } from 'react';
 
 export default function Game() {
-    const [words, setWords] = useState([]);
-    const [answer, setAnswer] = useState([]);
-    const [win, setWin] = useState(false);
+    const [words, setWords] = useState([]); //all possible answer words
+    const [answer, setAnswer] = useState([]); //answer word
+    const [win, setWin] = useState(false); //whether the user guessed the answer word
     useEffect(() => import('./words.json').then((m) => setWords(m.default)), []);
     useEffect(() => setAnswer(words[getAnswerIndex()]), [words])
     console.log(answer);
 
-    const allWordMatches = findMatches(answer);
-    const [currentWordMatchIndex, setCurrentWordMatchIndex] = useState(1);
+    const [allWordMatches, setAllWordMatches] = useState(findMatches(answer)); //word assosiations to the answer word
+    const [currentWordMatchIndex, setCurrentWordMatchIndex] = useState(1); //current word to display
     const [displayedWordMatches, setDisplayedWordMatches] = useState([allWordMatches.at(0)])
     const [guess, setGuess] = useState('');
 
@@ -28,15 +28,18 @@ export default function Game() {
     function resetState() {
         setAnswer(words[getAnswerIndex()]);
         setCurrentWordMatchIndex(0);
-        setDisplayedWordMatches([allWordMatches.at(0)])
+        setAllWordMatches(findMatches(answer));
+        setDisplayedWordMatches([allWordMatches.at(0)]);
+        setWin(false);
+        setGuess("");
+        console.log(answer)
     }
 
     const updateDisplayedWords = () => {
         //console.log(guess);
         if (guess.toLocaleLowerCase().trim() === answer.toLocaleLowerCase()) {
-            console.log("correct");
             setWin(true)
-            resetState();
+            //resetState();
         }
         else {
             if (currentWordMatchIndex < 6) {
@@ -59,7 +62,8 @@ export default function Game() {
                 <button onClick={updateDisplayedWords}>Guess!</button>
             </label>
             {win && <label>correct!</label>}
-
+            <br></br>
+            {win && <button onClick={resetState}>Play Again?</button>}
         </div>
     );
 }
